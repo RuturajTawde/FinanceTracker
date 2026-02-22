@@ -32,7 +32,7 @@ export default function Dashboard({ transactions }: any) {
   ];
 
   return (
-    <Grid container spacing={3} sx={{ mb: 4 }}>
+    <Grid container spacing={4} sx={{ mb: 4 }} justifyContent={"center"}>
       {kpis.map((kpi) => (
         <Grid
           item
