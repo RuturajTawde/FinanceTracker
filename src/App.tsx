@@ -12,7 +12,7 @@ import Upload from "./components/Upload";
 import TransactionTable from "./components/TransactionTable";
 import Charts from "./components/Charts";
 import MonthlyTrend from "./components/MonthlyTrend";
-import Dashboard from "./components/Dashboard"; // ✅ KPI Component
+import Dashboard from "./components/Dashboard";
 
 function App() {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -30,26 +30,23 @@ function App() {
   );
 
   return (
-
     <ThemeProvider theme={theme}>
       <CssBaseline />
 
-      {/* Outer Background */}
       {/* Full Screen Background */}
       <Box
         sx={{
           minHeight: "100vh",
           width: "100%",
           backgroundColor: darkMode ? "#121212" : "#f5f7fb",
-          display: "flex",
-          justifyContent: "center",
         }}
       >
-        {/* Centered Content */}
+        {/* Main Content Container */}
         <Box
           sx={{
             width: "100%",
-            maxWidth: "1400px",
+            maxWidth: "1600px",
+            mx: "auto",
             px: { xs: 2, sm: 4, md: 6 },
             py: 4,
             boxSizing: "border-box",
@@ -98,21 +95,49 @@ function App() {
 
               {page === "dashboard" && (
                 <>
-                  {/* ✅ KPI Cards */}
-                  <Box mb={3}>
-                    <Dashboard transactions={transactions} />
+                  {/* TOP SECTION */}
+                  <Box
+                    display="grid"
+                    gridTemplateColumns={{
+                      xs: "1fr",
+                      md: "1fr 2fr",
+                    }}
+                    gap={3}
+                    mb={4}
+                    alignItems="stretch"
+                    width="100%"
+                  >
+                    {/* LEFT - KPI Column */}
+                    <Box
+                      display="grid"
+                      gap={3}
+                    >
+                      <Dashboard transactions={transactions} />
+                    </Box>
+
+                    {/* RIGHT - Charts */}
+                    <Box
+                      display="grid"
+                      gap={3}
+                    >
+                      <Charts transactions={transactions} />
+                    </Box>
                   </Box>
 
-                  {/* Charts */}
-                  <Box mb={3}>
-                    <Charts transactions={transactions} />
+                  {/* TABLE SECTION */}
+                  <Box
+                    sx={{
+                      backgroundColor: darkMode ? "#1e1e1e" : "#ffffff",
+                      borderRadius: 3,
+                      p: 3,
+                      border: "1px solid #e6e8ec",
+                    }}
+                  >
+                    <TransactionTable
+                      transactions={transactions}
+                      setTransactions={setTransactions}
+                    />
                   </Box>
-
-                  {/* Table */}
-                  <TransactionTable
-                    transactions={transactions}
-                    setTransactions={setTransactions}
-                  />
                 </>
               )}
 

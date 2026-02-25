@@ -1,99 +1,147 @@
 import {
-  PieChart,
-  Pie,
-  Cell,
   BarChart,
   Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
-  Legend,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 
+import { Paper, Box } from "@mui/material";
 import { calculateAnalytics } from "../utils/analytics";
 
-const COLORS = [
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff8042",
-  "#00C49F",
-  "#FFBB28",
-];
+const COLORS = ["#5b7cfa", "#16a34a", "#dc2626"];
 
 export default function Charts({ transactions }: any) {
   const data = calculateAnalytics(transactions);
 
-  // Pie Data (only expense categories)
-  const pieData = Object.entries(data.categoryTotals)
-    .filter(([_, value]) => value > 0)
-    .map(([key, value]) => ({
-      name: key,
-      value,
-    }));
+  // 🔹 Category distribution (sorted)
+  const categoryData = Object.entries(data.categoryTotals)
+    .map(([name, value]) => ({
+      name,
+      value: Number(value),
+    }))
+    .sort((a, b) => b.value - a.value);
 
-  // Monthly trend
-  const monthlyTotals: Record<string, number> = {};
+  // 🔹 Expense vs Investment donut data
+  const allocationData = [
+    {
+      name: "Expense",
+      value: Number(data.expense),
+    },
+    {
+      name: "Investment",
+      value: Number(data.investment),
+    },
+  ];
 
-  transactions.forEach((t: any) => {
-    if (!t.date) return;
-
-    const month = t.date.substring(0, 7); // YYYY-MM
-
-    if (!monthlyTotals[month]) monthlyTotals[month] = 0;
-
-    if (t.debit > 0) {
-      monthlyTotals[month] += Number(t.debit);
-    }
-  });
-
-  const monthlyData = Object.entries(monthlyTotals).map(([month, value]) => ({
-    month,
-    value,
-  }));
+  const totalAllocation =
+    Number(data.expense) + Number(data.investment);
 
   return (
-    <div style={{ display: "flex", gap: 20 }}>
-      {/* LEFT - PIE */}
-      <div style={{ flex: 1 }}>
-        <h3>Expense Distribution</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              outerRadius={100}
-              label
-            >
-              {pieData.map((_, index) => (
-                <Cell key={index} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+    <Box display="grid" gap={3}>
+      {/* 🔵 Expense Distribution - Horizontal Bar */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          borderRadius: 3,
+          border: "1px solid #e6e8ec",
+          backgroundColor: "#ffffff",
+        }}
+      >
+        <Box fontSize={16} fontWeight={600} mb={2}>
+          Expense Distribution
+        </Box>
 
-      {/* RIGHT - BAR */}
-      <div style={{ flex: 1 }}>
-        <h3>Category Breakdown</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={pieData}>
+        <ResponsiveContainer width="100%" height={360}>
+          <BarChart
+            data={categoryData}
+            layout="vertical"
+            margin={{ left: 20 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="value" fill="#8884d8" />
+            <XAxis
+              type="number"
+              tickFormatter={(value) =>
+                `₹${Number(value).toLocaleString()}`
+              }
+            />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={120}
+            />
+            <Tooltip
+              formatter={(value: number) =>
+                `₹ ${value.toLocaleString()}`
+              }
+            />
+            <Bar
+              dataKey="value"
+              fill="#5b7cfa"
+              radius={[0, 6, 6, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
-      </div>
-    </div>
+      </Paper>
+
+      {/* 🟢 Expense vs Investment Allocation - Donut */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 3,
+          borderRadius: 3,
+          border: "1px solid #e6e8ec",
+          backgroundColor: "#ffffff",
+          textAlign: "center",
+        }}
+      >
+        <Box fontSize={16} fontWeight={600} mb={2}>
+          Expense vs Investment Allocation
+        </Box>
+
+        <ResponsiveContainer width="100%" height={320}>
+          <PieChart>
+            <Pie
+              data={allocationData}
+              dataKey="value"
+              nameKey="name"
+              innerRadius={70}
+              outerRadius={120}
+              paddingAngle={4}
+              label={({ percent }) =>
+                `${(percent * 100).toFixed(1)}%`
+              }
+            >
+              {allocationData.map((_, index) => (
+                <Cell
+                  key={index}
+                  fill={index === 0 ? "#dc2626" : "#16a34a"}
+                />
+              ))}
+            </Pie>
+
+            <Tooltip
+              formatter={(value: number) =>
+                `₹ ${value.toLocaleString()}`
+              }
+            />
+          </PieChart>
+        </ResponsiveContainer>
+
+        {/* Center Total Display */}
+        <Box mt={2} fontSize={14} color="text.secondary">
+          Total Allocated
+        </Box>
+        <Box fontSize={18} fontWeight={700}>
+          ₹ {totalAllocation.toLocaleString()}
+        </Box>
+      </Paper>
+    </Box>
   );
 }
