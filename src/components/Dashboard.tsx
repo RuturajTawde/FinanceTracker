@@ -1,4 +1,4 @@
-import { Grid, Paper, Box } from "@mui/material";
+import { Paper, Box } from "@mui/material";
 import { calculateAnalytics } from "../utils/analytics";
 
 export default function Dashboard({ transactions }: any) {
@@ -32,56 +32,52 @@ export default function Dashboard({ transactions }: any) {
   ];
 
   return (
-    <Grid container spacing={3} sx={{ mb: 4 }}>
+    <Box
+      display="grid"
+      gap={3}
+    >
       {kpis.map((kpi) => (
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={6}
-          lg={3}
+        <Paper
           key={kpi.label}
+          elevation={0}
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            border: "1px solid #e6e8ec",
+            backgroundColor: kpi.bg,
+            minHeight: 140,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            transition: "0.2s ease",
+            "&:hover": {
+              transform: "translateY(-4px)",
+            },
+          }}
         >
-          <Paper
-            elevation={0}
+          <Box
             sx={{
-              p: 3,
-              borderRadius: 3,
-              border: "1px solid #e6e8ec",
-              backgroundColor: kpi.bg,
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              transition: "0.2s ease",
-              "&:hover": {
-                transform: "translateY(-3px)",
-              },
+              fontSize: 15,
+              fontWeight: 500,
+              color: "text.secondary",
+              mb: 1,
+              letterSpacing: 0.5,
             }}
           >
-            <Box
-              sx={{
-                fontSize: 14,
-                fontWeight: 500,
-                color: "text.secondary",
-                letterSpacing: 0.5,
-              }}
-            >
-              {kpi.label}
-            </Box>
+            {kpi.label}
+          </Box>
 
-            <Box
-              sx={{
-                fontSize: { xs: 22, sm: 24, md: 26 },
-                fontWeight: 700,
-                color: kpi.color,
-              }}
-            >
-              ₹ {kpi.value.toLocaleString()}
-            </Box>
-          </Paper>
-        </Grid>
+          <Box
+            sx={{
+              fontSize: { xs: 24, md: 28, lg: 32 },
+              fontWeight: 700,
+              color: kpi.color,
+            }}
+          >
+            ₹ {Number(kpi.value).toLocaleString()}
+          </Box>
+        </Paper>
       ))}
-    </Grid>
+    </Box>
   );
 }

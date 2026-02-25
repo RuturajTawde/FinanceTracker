@@ -8,5 +8,7 @@ export const CATEGORY_CONFIG = [
   { label: "Refund", group: "income" },
   { label: "Shopping", group: "expense" },
   { label: "EMI", group: "expense" },
-  { label: "Misc", group: "expense" }
+  { label: "Health", group: "expense" },
+  { label: "Misc", group: "expense" },
+  
 ];
