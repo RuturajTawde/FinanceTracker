@@ -26,7 +26,7 @@ function App() {
           mode: darkMode ? "dark" : "light",
         },
       }),
-    [darkMode]
+    [darkMode],
   );
 
   return (
@@ -61,7 +61,15 @@ function App() {
             flexWrap="wrap"
             gap={2}
           >
-            <Box fontSize={22} fontWeight={600}>
+            <Box
+              sx={{
+                fontSize: 28,
+                fontWeight: 700,
+                background: "linear-gradient(90deg, #5b7cfa, #2a9d8f)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
               Finance Dashboard
             </Box>
 
@@ -108,18 +116,12 @@ function App() {
                     width="100%"
                   >
                     {/* LEFT - KPI Column */}
-                    <Box
-                      display="grid"
-                      gap={3}
-                    >
+                    <Box display="grid" gap={3}>
                       <Dashboard transactions={transactions} />
                     </Box>
 
                     {/* RIGHT - Charts */}
-                    <Box
-                      display="grid"
-                      gap={3}
-                    >
+                    <Box display="grid" gap={3}>
                       <Charts transactions={transactions} />
                     </Box>
                   </Box>

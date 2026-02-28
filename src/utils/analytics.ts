@@ -26,6 +26,7 @@ export const calculateAnalytics = (transactions: any[]) => {
     expense,
     investment,
     savings: income - expense,
+    available: income - expense - investment,
     categoryTotals
   };
 };

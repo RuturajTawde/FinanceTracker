@@ -29,13 +29,16 @@ export default function Dashboard({ transactions }: any) {
       bg: "rgba(168,85,247,0.08)",
       color: "#7c3aed",
     },
+    {
+      label: "Available Balance",
+      value: data.available,
+      bg: data.available >= 0 ? "rgba(16,185,129,0.08)" : "rgba(239,68,68,0.08)",
+      color: data.available >= 0 ? "#10b981" : "#ef4444",
+    },
   ];
 
   return (
-    <Box
-      display="grid"
-      gap={3}
-    >
+    <Box display="grid" gap={3}>
       {kpis.map((kpi) => (
         <Paper
           key={kpi.label}
