@@ -8,7 +8,7 @@ export const calculateAnalytics = (transactions: any[]) => {
   const categoryTotals: Record<string, number> = {};
 
   transactions.forEach((t) => {
-    const config = CATEGORY_CONFIG.find(c => c.label === t.type);
+    const config = CATEGORY_CONFIG.find((c) => c.label === t.type);
     if (!config) return;
 
     const amount = Number(t.debit) || Number(t.credit) || 0;
@@ -21,11 +21,38 @@ export const calculateAnalytics = (transactions: any[]) => {
     if (config.group === "investment") investment += amount;
   });
 
+  const savings = income - expense;
+  const available = income - expense - investment;
+
+  const expensePercent = income ? (expense / income) * 100 : 0;
+  const investmentPercent = income ? (investment / income) * 100 : 0;
+  const availablePercent = income ? (available / income) * 100 : 0;
+
+  // Financial Health Score Logic
+  let score = 100;
+
+  if (expensePercent > 70) score -= 30;
+  if (investmentPercent < 20) score -= 20;
+  if (available < 0) score -= 30;
+
+  score = Math.max(score, 0);
+
+  let healthLabel = "Excellent";
+  if (score <= 80) healthLabel = "Good";
+  if (score <= 60) healthLabel = "Average";
+  if (score <= 40) healthLabel = "Needs Attention";
+
   return {
     income,
     expense,
     investment,
-    savings: income - expense,
-    categoryTotals
+    savings,
+    available,
+    expensePercent,
+    investmentPercent,
+    availablePercent,
+    financialScore: score,
+    healthLabel,
+    categoryTotals,
   };
 };
