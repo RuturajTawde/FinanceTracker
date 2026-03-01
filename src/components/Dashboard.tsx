@@ -36,7 +36,7 @@ export default function Dashboard({ transactions }: any) {
       color: "#2563eb",
     },
     {
-      label: "Available Balance (saved - investment)",
+      label: "Available Balance (Saved - Investment)",
       value: data.available,
       percent: data.availablePercent,
       bg:
