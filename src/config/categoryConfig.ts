@@ -17,6 +17,4 @@ export const CATEGORY_CONFIG = [
   { label: "Other Expense", group: "expense" },
   { label: "Misc", group: "expense" },
   { label: "Shyam complex expense", group: "expense"}
-
-  
 ];

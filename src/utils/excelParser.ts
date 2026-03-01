@@ -50,6 +50,7 @@ export const parseExcel = async (file: File) => {
           }
 
           return {
+            id: crypto.randomUUID(),
             date: formattedDate,
             description: descriptionValue || "",
             credit: Number(String(creditValue).replace(/,/g, "")) || 0,

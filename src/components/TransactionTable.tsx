@@ -14,10 +14,8 @@ import {
   Button,
   TablePagination,
 } from "@mui/material";
-
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-
 import { useState, useMemo } from "react";
 import { CATEGORY_CONFIG } from "../config/categoryConfig";
 
@@ -26,10 +24,7 @@ type SortItem = {
   direction: "asc" | "desc";
 };
 
-const GROUP_BADGE_STYLES: Record<
-  string,
-  { bg: string; color: string }
-> = {
+const GROUP_BADGE_STYLES: Record<string, { bg: string; color: string }> = {
   income: { bg: "rgba(34,197,94,0.12)", color: "#16a34a" },
   expense: { bg: "rgba(239,68,68,0.10)", color: "#dc2626" },
   investment: { bg: "rgba(59,130,246,0.12)", color: "#2563eb" },
@@ -41,21 +36,18 @@ export default function TransactionTable({
   setTransactions,
 }: any) {
   const [sortConfig, setSortConfig] = useState<SortItem[]>([]);
-  const [filterType, setFilterType] = useState<
-    "all" | "income" | "expense"
-  >("all");
-
-  const [typeFilter, setTypeFilter] = useState<string>("all"); // ✅ NEW
-
+  const [filterType, setFilterType] = useState<"all" | "income" | "expense">(
+    "all",
+  );
+  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
 
   const handleReset = () => {
     setSortConfig([]);
     setFilterType("all");
-    setTypeFilter("all"); // ✅ reset type filter
+    setTypeFilter("all");
     setSearchTerm("");
     setPage(0);
   };
@@ -70,7 +62,7 @@ export default function TransactionTable({
 
       if (existing.direction === "asc") {
         return prev.map((item) =>
-          item.key === key ? { ...item, direction: "desc" } : item
+          item.key === key ? { ...item, direction: "desc" } : item,
         );
       }
 
@@ -84,23 +76,19 @@ export default function TransactionTable({
     // 🔍 Search
     if (searchTerm.trim()) {
       data = data.filter((t) =>
-        t.description
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase())
+        t.description?.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // 🔎 Group Filter
     if (filterType !== "all") {
       data = data.filter((t) => {
-        const config = CATEGORY_CONFIG.find(
-          (c) => c.label === t.type
-        );
+        const config = CATEGORY_CONFIG.find((c) => c.label === t.type);
         return config?.group === filterType;
       });
     }
 
-    // ✅ Exact Type Filter
+    // 🔎 Exact Type Filter
     if (typeFilter !== "all") {
       data = data.filter((t) => t.type === typeFilter);
     }
@@ -121,9 +109,7 @@ export default function TransactionTable({
           }
 
           if (aVal !== bVal) {
-            return sort.direction === "asc"
-              ? aVal - bVal
-              : bVal - aVal;
+            return sort.direction === "asc" ? aVal - bVal : bVal - aVal;
           }
         }
         return 0;
@@ -135,16 +121,15 @@ export default function TransactionTable({
 
   const paginatedData = processedTransactions.slice(
     page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+    page * rowsPerPage + rowsPerPage,
   );
 
-  const updateRow = (
-    absoluteIndex: number,
-    field: string,
-    value: any
-  ) => {
-    const updated = [...transactions];
-    updated[absoluteIndex][field] = value;
+  // ✅ FIXED: Update by ID (NOT index)
+  const updateRow = (id: string, field: string, value: any) => {
+    const updated = transactions.map((t: any) =>
+      t.id === id ? { ...t, [field]: value } : t,
+    );
+
     setTransactions(updated);
   };
 
@@ -152,12 +137,7 @@ export default function TransactionTable({
     const item = sortConfig.find((s) => s.key === key);
 
     if (!item) {
-      return (
-        <ArrowUpwardIcon
-          fontSize="inherit"
-          sx={{ opacity: 0.3 }}
-        />
-      );
+      return <ArrowUpwardIcon fontSize="inherit" sx={{ opacity: 0.3 }} />;
     }
 
     return item.direction === "asc" ? (
@@ -205,11 +185,7 @@ export default function TransactionTable({
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={handleReset}
-        >
+        <Button variant="outlined" size="small" onClick={handleReset}>
           Reset All
         </Button>
       </Box>
@@ -223,42 +199,38 @@ export default function TransactionTable({
                 {renderSortIcon("date")}
               </IconButton>
             </TableCell>
-
             <TableCell>Description</TableCell>
-
             <TableCell>
               Credit
               <IconButton size="small" onClick={() => handleSort("credit")}>
                 {renderSortIcon("credit")}
               </IconButton>
             </TableCell>
-
             <TableCell>
               Debit
               <IconButton size="small" onClick={() => handleSort("debit")}>
                 {renderSortIcon("debit")}
               </IconButton>
             </TableCell>
-
             <TableCell>Type</TableCell>
           </TableRow>
         </TableHead>
 
         <TableBody>
-          {paginatedData.map((row: any, i: number) => {
-            const absoluteIndex = page * rowsPerPage + i;
+          {paginatedData.map((row: any) => {
             const isBigExpense = Number(row.debit) > 10000;
 
             const categoryConfig = CATEGORY_CONFIG.find(
-              (c) => c.label === row.type
+              (c) => c.label === row.type,
             );
 
             const group = categoryConfig?.group || "";
+
             const badgeStyle = GROUP_BADGE_STYLES[group];
 
             return (
               <TableRow
-                key={absoluteIndex}
+                key={row.id}
                 hover
                 sx={{
                   backgroundColor: isBigExpense
@@ -269,9 +241,7 @@ export default function TransactionTable({
                 <TableCell>
                   <TextField
                     value={row.date}
-                    onChange={(e) =>
-                      updateRow(absoluteIndex, "date", e.target.value)
-                    }
+                    onChange={(e) => updateRow(row.id, "date", e.target.value)}
                     size="small"
                   />
                 </TableCell>
@@ -280,11 +250,7 @@ export default function TransactionTable({
                   <TextField
                     value={row.description}
                     onChange={(e) =>
-                      updateRow(
-                        absoluteIndex,
-                        "description",
-                        e.target.value
-                      )
+                      updateRow(row.id, "description", e.target.value)
                     }
                     size="small"
                   />
@@ -295,11 +261,7 @@ export default function TransactionTable({
                     type="number"
                     value={row.credit}
                     onChange={(e) =>
-                      updateRow(
-                        absoluteIndex,
-                        "credit",
-                        e.target.value
-                      )
+                      updateRow(row.id, "credit", e.target.value)
                     }
                     size="small"
                   />
@@ -309,13 +271,7 @@ export default function TransactionTable({
                   <TextField
                     type="number"
                     value={row.debit}
-                    onChange={(e) =>
-                      updateRow(
-                        absoluteIndex,
-                        "debit",
-                        e.target.value
-                      )
-                    }
+                    onChange={(e) => updateRow(row.id, "debit", e.target.value)}
                     size="small"
                   />
                 </TableCell>
@@ -328,22 +284,15 @@ export default function TransactionTable({
                       borderRadius: 2,
                       display: "inline-block",
                       backgroundColor:
-                        badgeStyle?.bg ||
-                        "rgba(203,213,225,0.15)",
-                      color:
-                        badgeStyle?.color ||
-                        "#475569",
+                        badgeStyle?.bg || "rgba(203,213,225,0.15)",
+                      color: badgeStyle?.color || "#475569",
                       fontWeight: 600,
                     }}
                   >
                     <Select
                       value={row.type}
                       onChange={(e) =>
-                        updateRow(
-                          absoluteIndex,
-                          "type",
-                          e.target.value
-                        )
+                        updateRow(row.id, "type", e.target.value)
                       }
                       size="small"
                       variant="standard"
@@ -380,7 +329,7 @@ export default function TransactionTable({
           setRowsPerPage(parseInt(e.target.value, 10));
           setPage(0);
         }}
-        rowsPerPageOptions={[10, 20, 50]}
+        rowsPerPageOptions={[10, 20, 50, 100, 200]}
         sx={{
           borderTop: "1px solid #e5e7eb",
           mt: 2,

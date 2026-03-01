@@ -22,6 +22,13 @@ export default function Dashboard({ transactions }: any) {
       color: "#dc2626",
     },
     {
+      label: "Saved (Income - Expense)",
+      value: data.savings,
+      percent: data.income ? (data.savings / data.income) * 100 : 0,
+      bg: "rgba(168,85,247,0.08)",
+      color: "#7c3aed",
+    },
+    {
       label: "Investment",
       value: data.investment,
       percent: data.investmentPercent,
@@ -29,20 +36,11 @@ export default function Dashboard({ transactions }: any) {
       color: "#2563eb",
     },
     {
-      label: "Savings",
-      value: data.savings,
-      percent: data.income ? (data.savings / data.income) * 100 : 0,
-      bg: "rgba(168,85,247,0.08)",
-      color: "#7c3aed",
-    },
-    {
-      label: "Available Balance",
+      label: "Available Balance (saved - investment)",
       value: data.available,
       percent: data.availablePercent,
       bg:
-        data.available >= 0
-          ? "rgba(16,185,129,0.08)"
-          : "rgba(239,68,68,0.08)",
+        data.available >= 0 ? "rgba(16,185,129,0.08)" : "rgba(239,68,68,0.08)",
       color: data.available >= 0 ? "#10b981" : "#ef4444",
       showWarning: data.available < 0,
     },
@@ -124,10 +122,7 @@ export default function Dashboard({ transactions }: any) {
 
           {/* Warning */}
           {kpi.showWarning && (
-            <Typography
-              fontSize={12}
-              sx={{ color: "#ef4444", mt: 1 }}
-            >
+            <Typography fontSize={12} sx={{ color: "#ef4444", mt: 1 }}>
               ⚠ You are spending more than your income
             </Typography>
           )}
