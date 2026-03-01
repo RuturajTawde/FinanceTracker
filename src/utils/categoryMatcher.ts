@@ -1,35 +1,25 @@
-const RULES: Record<string, string> = {
-  SALARY: "Salary",
-  ZOMATO: "Food",
-  SWIGGY: "Food",
-  DIETICO: "Food",
-  UBER: "Travel",
-  OLA: "Travel",
-  MMRDA:"Travel",
-  MOHAN: "Rent",
-  SIP: "Investment",
-  MUTUAL: "Investment",
-  INDSTOCKS:"Investment",
-  CLEARING:"Investment",
-  SAVING:"Investment",
-  RD:"Investment",
-  TRANSFER: "Transfer",
-  BAVKAR:"Transfer",
-  REFUND: "Refund",
-  EMI: "EMI",
-  AMAZON: "Shopping",
-  FLIPKART: "Shopping",
-  HEALTH:"Health",
-  BHAKTIVEDANTA:"Health",
-  CHEMIST:"Health"
-};
+import { CATEGORY_KEYWORDS } from "../config/categoryKeywords";
 
-export const autoDetectCategory = (description: string) => {
+export const autoDetectCategory = (
+  description: string,
+  credit?: number,
+  debit?: number
+) => {
   const upper = description?.toUpperCase() || "";
 
-  for (const key in RULES) {
-    if (upper.includes(key)) return RULES[key];
+  for (const category in CATEGORY_KEYWORDS) {
+    const keywords = CATEGORY_KEYWORDS[category];
+
+    for (const keyword of keywords) {
+      if (upper.includes(keyword)) {
+        return category; // must match CATEGORY_CONFIG.label
+      }
+    }
   }
+
+  // Smart fallback logic
+  if (credit && credit > 0) return "Other Income";
+  if (debit && debit > 0) return "Other Expense";
 
   return "Misc";
 };

@@ -21,8 +21,16 @@ export default function Upload({ setTransactions }: any) {
 
     const withCategory = data.map((row: any) => ({
       ...row,
-      type: autoDetectCategory(row.description),
+      type: autoDetectCategory(
+        row.description,
+        Number(row.credit),
+        Number(row.debit)
+      )
     }));
+
+    const sorted = withCategory.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
 
     setTransactions(withCategory);
     setUploaded(true);

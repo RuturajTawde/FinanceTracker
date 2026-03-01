@@ -32,6 +32,12 @@ export const parseExcel = async (file: File) => {
           const descriptionValue = row.description || row.Description;
           const creditValue = row.credit || row.Credit;
           const debitValue = row.debit || row.Debit;
+          const balanceValue =
+            row.closingBalance ||
+            row.ClosingBalance ||
+            row["Closing Balance"] ||
+            row.balance ||
+            row.Balance;
 
           let formattedDate = "";
 
@@ -46,8 +52,10 @@ export const parseExcel = async (file: File) => {
           return {
             date: formattedDate,
             description: descriptionValue || "",
-            credit: Number(creditValue) || 0,
-            debit: Number(debitValue) || 0
+            credit: Number(String(creditValue).replace(/,/g, "")) || 0,
+            debit: Number(String(debitValue).replace(/,/g, "")) || 0,
+            closingBalance:
+              Number(String(balanceValue).replace(/,/g, "")) || 0
           };
         });
 
