@@ -2,16 +2,26 @@ const RULES: Record<string, string> = {
   SALARY: "Salary",
   ZOMATO: "Food",
   SWIGGY: "Food",
+  DIETICO: "Food",
   UBER: "Travel",
   OLA: "Travel",
-  RENT: "Rent",
+  MMRDA:"Travel",
+  MOHAN: "Rent",
   SIP: "Investment",
   MUTUAL: "Investment",
+  INDSTOCKS:"Investment",
+  CLEARING:"Investment",
+  SAVING:"Investment",
+  RD:"Investment",
   TRANSFER: "Transfer",
+  BAVKAR:"Transfer",
   REFUND: "Refund",
   EMI: "EMI",
   AMAZON: "Shopping",
-  FLIPKART: "Shopping"
+  FLIPKART: "Shopping",
+  HEALTH:"Health",
+  BHAKTIVEDANTA:"Health",
+  CHEMIST:"Health"
 };
 
 export const autoDetectCategory = (description: string) => {
